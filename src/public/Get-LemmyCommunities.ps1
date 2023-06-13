@@ -1,5 +1,5 @@
 Function Get-LemmyCommunities {
-    <#
+	<#
     .SYNOPSIS
     Call Lemmy API
 
@@ -18,21 +18,21 @@ Function Get-LemmyCommunities {
     .NOTES
     Lemmy API class: listCommunities
     #>
-    param(
+	param(
 		[int]$Limit,
 		[int]$Page,
-				[ValidateSet('Active','Hot','MostComments','New','NewComments','Old','TopAll','TopDay','TopMonth','TopWeek','TopYear')]
+		[ValidateSet('Active', 'Hot', 'MostComments', 'New', 'NewComments', 'Old', 'TopAll', 'TopDay', 'TopMonth', 'TopWeek', 'TopYear')]
 		[string]$Sort,
-				[ValidateSet('All','Community','Local','Subscribed')]
+		[ValidateSet('All', 'Community', 'Local', 'Subscribed')]
 		[string]$Type
-)
+	)
    
-    	$RequestParameters = @{
+	$RequestParameters = @{
 		limit = $Limit
-		page = $Page
-		sort = $Sort
+		page  = $Page
+		sort  = $Sort
 		type_ = $Type
-}
+	}
 
-    Invoke-LemmyRestMethod -Uri '/community/list' -Method 'GET' -RequestParameters $RequestParameters
+	Invoke-LemmyRestMethod -Uri '/community/list' -Method 'GET' -RequestParameters $RequestParameters
 }

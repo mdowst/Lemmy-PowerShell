@@ -1,5 +1,5 @@
 Function New-LemmyCommunity {
-    <#
+	<#
     .SYNOPSIS
     Call Lemmy API
 
@@ -26,27 +26,27 @@ Function New-LemmyCommunity {
     .NOTES
     Lemmy API class: createCommunity
     #>
-    param(
+	param(
 		[string]$Banner,
 		[string]$Description,
-		[number[]]$DiscussionLanguages,
+		[int[]]$DiscussionLanguages,
 		[string]$Icon,
 		[string]$Name,
 		[boolean]$Nsfw,
 		[boolean]$PostingRestrictedToMods,
 		[string]$Title
-)
+	)
    
-    	$RequestParameters = @{
-		banner = $Banner
-		description = $Description
-		discussion_languages = $DiscussionLanguages
-		icon = $Icon
-		name = $Name
-		nsfw = $Nsfw
+	$RequestParameters = @{
+		banner                     = $Banner
+		description                = $Description
+		discussion_languages       = $DiscussionLanguages
+		icon                       = $Icon
+		name                       = $Name
+		nsfw                       = $Nsfw
 		posting_restricted_to_mods = $PostingRestrictedToMods
-		title = $Title
-}
+		title                      = $Title
+	}
 
-    Invoke-LemmyRestMethod -Uri '/community' -Method 'POST' -RequestParameters $RequestParameters
+	Invoke-LemmyRestMethod -Uri '/community' -Method 'POST' -RequestParameters $RequestParameters
 }

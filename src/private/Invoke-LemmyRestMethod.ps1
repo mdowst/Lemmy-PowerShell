@@ -39,11 +39,19 @@ Function Invoke-LemmyRestMethod{
         Uri = "$($Global:__LemmyInstance.Domain)/api/v3$($Uri)"
         Method = $Method
         ContentType = 'application/json'
+        SkipCertificateCheck = $Global:__LemmyInstance.SkipCertificateCheck
     }
 
     if($RequestParameters.Count -gt 0){
         $params.Add('Body',($RequestParameters | ConvertTo-Json))
     }
 
-    Invoke-RestMethod @params
+    $request = Invoke-RestMethod @params
+    if($request.psobject.Properties.Count -eq 1 -and $request.psobject.Properties.TypeNameOfValue -eq 'System.Object[]'){
+        $request.psobject.Properties.Value
+    }
+    else{
+        $request
+    }
+
 }

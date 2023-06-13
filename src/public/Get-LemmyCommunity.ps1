@@ -15,14 +15,20 @@ Function Get-LemmyCommunity {
     Lemmy API class: getCommunity
     #>
     param(
-		[int]$Id,
-		[string]$Name
-)
+        [int]$Id,
+        [string]$Name
+    )
    
-    	$RequestParameters = @{
-		id = $Id
-		name = $Name
-}
+    $RequestParameters = @{
+        id   = $Id
+        name = $Name
+    }
 
-    Invoke-LemmyRestMethod -Uri '/community' -Method 'GET' -RequestParameters $RequestParameters
+    $query = $RequestParameters.GetEnumerator() | ForEach-Object {
+        if ($_.Value) {
+            "$($_.key)=$($_.Value)"
+        }
+    }
+    $request = Invoke-LemmyRestMethod -Uri ('/community?' + ($query -join('&'))) -Method 'GET' -RequestParameters $RequestParameters
+    $request | Where-Object{ $_.community } | Select-Object -ExpandProperty community | Select-Object -Property * -Unique
 }

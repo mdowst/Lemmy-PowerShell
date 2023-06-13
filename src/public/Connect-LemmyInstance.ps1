@@ -17,33 +17,42 @@ Function Connect-LemmyInstance {
     General notes
     #>
     param(
-        [ValidatePattern('^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$')]    
         [string]$Uri,
         [pscredential]$Credential,
+        [switch]$SkipCertificateCheck=$false,
         [switch]$PassThru
     )
 
     $RequestBody = @{
-        password = $credential.GetNetworkCredential().Password
+        password          = $credential.GetNetworkCredential().Password
         username_or_email = $Credential.UserName
     } | ConvertTo-Json
     
     
-    $URI = $URI -replace('/$','')
+    $URI = $URI -replace ('/$', '')
     
+    $InvokeRestMethodParam = @{
+        Uri         = "$($Uri)/api/v3/user/login"
+        Method      = 'POST'
+        Body        = $RequestBody
+        ContentType = 'application/json'
+        SkipCertificateCheck = $SkipCertificateCheck
+    }
 
-    $authRequest = Invoke-RestMethod -Uri "$($Uri)/api/v3/user/login" -Method 'POST' -Body $RequestBody -ContentType 'application/json'
+    $authRequest = Invoke-RestMethod @InvokeRestMethodParam
+
 
     $Instance = [PSCustomObject]@{
         Domain = $Uri
-        auth = $authRequest.jwt
+        auth   = $authRequest.jwt
+        SkipCertificateCheck = $SkipCertificateCheck
     }
     $global:__LemmyInstance = $Instance
 
-    if($PassThru){
+    if ($PassThru) {
         $Instance
     }
-    else{
+    else {
         Write-Output "Connected to $($Instance.Domain)"
     }
 }

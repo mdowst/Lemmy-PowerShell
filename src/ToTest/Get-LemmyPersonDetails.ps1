@@ -1,5 +1,5 @@
 Function Get-LemmyPersonDetails {
-    <#
+	<#
     .SYNOPSIS
     Call Lemmy API
 
@@ -24,26 +24,26 @@ Function Get-LemmyPersonDetails {
     .NOTES
     Lemmy API class: getPersonDetails
     #>
-    param(
+	param(
 		[int]$CommunityId,
 		[int]$Limit,
 		[int]$Page,
 		[int]$PersonId,
 		[boolean]$SavedOnly,
-				[ValidateSet('Active','Hot','MostComments','New','NewComments','Old','TopAll','TopDay','TopMonth','TopWeek','TopYear')]
+		[ValidateSet('Active', 'Hot', 'MostComments', 'New', 'NewComments', 'Old', 'TopAll', 'TopDay', 'TopMonth', 'TopWeek', 'TopYear')]
 		[string]$Sort,
 		[string]$Username
-)
+	)
    
-    	$RequestParameters = @{
+	$RequestParameters = @{
 		community_id = $CommunityId
-		limit = $Limit
-		page = $Page
-		person_id = $PersonId
-		saved_only = $SavedOnly
-		sort = $Sort
-		username = $Username
-}
+		limit        = $Limit
+		page         = $Page
+		person_id    = $PersonId
+		saved_only   = $SavedOnly
+		sort         = $Sort
+		username     = $Username
+	}
 
-    Invoke-LemmyRestMethod -Uri '/user' -Method 'GET' -RequestParameters $RequestParameters
+	Invoke-LemmyRestMethod -Uri '/user' -Method 'GET' -RequestParameters $RequestParameters
 }
