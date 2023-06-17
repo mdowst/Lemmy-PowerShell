@@ -1,40 +1,49 @@
 Function New-LemmyCommunity {
 	<#
     .SYNOPSIS
-    Call Lemmy API
-
-	.PARAMETER Banner
-
-	.PARAMETER Description
-
-	.PARAMETER DiscussionLanguages
-
-	.PARAMETER Icon
+    Creates a new Lemmy Community
 
 	.PARAMETER Name
-
-	.PARAMETER Nsfw
-
-	.PARAMETER PostingRestrictedToMods
+	The internal name of the community. Should not contain spaces or special characters
 
 	.PARAMETER Title
+	The display name of the community.
 
+	.PARAMETER Banner
+	URL to Banner image
+
+	.PARAMETER Description
+	The option description
+
+	.PARAMETER DiscussionLanguages
+	Languages allowed in the community. Leave blank for all. To find specfic ones use Find-LemmySiteLanguages
+
+	.PARAMETER Icon
+	URL to a site icon
+	
+	.PARAMETER Nsfw
+	Set to true to mark the community as not safe for work
+
+	.PARAMETER PostingRestrictedToMods
+	Set to true to prevent anyone other than mods from post to the community
+	
 
     .EXAMPLE
-    An example
+    New-LemmyCommunity -name 'PowerShell' -Title 'PowerShell is Awesome'
     
     .NOTES
     Lemmy API class: createCommunity
     #>
+	[CmdletBinding()]
 	param(
+		[string]$Name,
+		[string]$Title,
 		[string]$Banner,
 		[string]$Description,
 		[int[]]$DiscussionLanguages,
 		[string]$Icon,
-		[string]$Name,
 		[boolean]$Nsfw,
-		[boolean]$PostingRestrictedToMods,
-		[string]$Title
+		[boolean]$PostingRestrictedToMods
 	)
    
 	$RequestParameters = @{

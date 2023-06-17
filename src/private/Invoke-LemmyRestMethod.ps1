@@ -17,6 +17,7 @@ Function Invoke-LemmyRestMethod{
     .NOTES
     General notes
     #>
+    [CmdletBinding()]
     param(
         $Uri,
         $Method,
@@ -24,14 +25,17 @@ Function Invoke-LemmyRestMethod{
     )
     
     if(-not $PSBoundParameters['RequestParameters']){
-        $RequestParameters = @{}
+        $RequestBody = @{}
+    }
+    else{
+        $RequestBody = $RequestParameters.Clone()
     }
 
     if(-not $Global:__LemmyInstance){
         throw "Run Connect-LemmyInstance to connect to a Lemmy instance"
     }
     elseif($Global:__LemmyInstance.auth){
-        $RequestParameters.Add('auth', $Global:__LemmyInstance.auth)
+        $RequestBody.Add('auth', $Global:__LemmyInstance.auth)
     }
     
 
@@ -42,8 +46,8 @@ Function Invoke-LemmyRestMethod{
         SkipCertificateCheck = $Global:__LemmyInstance.SkipCertificateCheck
     }
 
-    if($RequestParameters.Count -gt 0){
-        $params.Add('Body',($RequestParameters | ConvertTo-Json))
+    if($RequestBody.Count -gt 0){
+        $params.Add('Body',($RequestBody | ConvertTo-Json))
     }
 
     $request = Invoke-RestMethod @params

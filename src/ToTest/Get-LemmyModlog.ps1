@@ -28,7 +28,7 @@ Function Get-LemmyModlog {
 		[int]$ModPersonId,
 		[int]$OtherPersonId,
 		[int]$Page,
-				[ValidateSet('AdminPurgeComment','AdminPurgeCommunity','AdminPurgePerson','AdminPurgePost','All','ModAdd','ModAddCommunity','ModBan','ModBanFromCommunity','ModFeaturePost','ModHideCommunity','ModLockPost','ModRemoveComment','ModRemoveCommunity','ModRemovePost','ModTransferCommunity')]
+		[ValidateSet('AdminPurgeComment','AdminPurgeCommunity','AdminPurgePerson','AdminPurgePost','All','ModAdd','ModAddCommunity','ModBan','ModBanFromCommunity','ModFeaturePost','ModHideCommunity','ModLockPost','ModRemoveComment','ModRemoveCommunity','ModRemovePost','ModTransferCommunity')]
 		[string]$Type
 )
    

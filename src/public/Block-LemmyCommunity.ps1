@@ -15,14 +15,13 @@ Function Block-LemmyCommunity {
     Lemmy API class: blockCommunity
     #>
     param(
-		[boolean]$Block,
-		[int]$CommunityId
-)
+        [int]$CommunityId
+    )
    
-    	$RequestParameters = @{
-		block = $Block
-		community_id = $CommunityId
-}
+    $RequestParameters = @{
+        block        = $true
+        community_id = $CommunityId
+    }
 
     Invoke-LemmyRestMethod -Uri '/community/block' -Method 'POST' -RequestParameters $RequestParameters
 }

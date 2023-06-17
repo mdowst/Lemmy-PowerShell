@@ -1,7 +1,7 @@
 Function Block-LemmyPerson {
     <#
     .SYNOPSIS
-    Call Lemmy API
+    Block a user from your account
 
 	.PARAMETER Block
 
@@ -15,14 +15,14 @@ Function Block-LemmyPerson {
     Lemmy API class: blockPerson
     #>
     param(
-		[boolean]$Block,
-		[int]$PersonId
-)
+        [boolean]$Block,
+        [int]$PersonId
+    )
    
-    	$RequestParameters = @{
-		block = $Block
-		person_id = $PersonId
-}
+    $RequestParameters = @{
+        block     = $true
+        person_id = $PersonId
+    }
 
     Invoke-LemmyRestMethod -Uri '/user/block' -Method 'POST' -RequestParameters $RequestParameters
 }

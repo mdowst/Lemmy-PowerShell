@@ -1,5 +1,5 @@
 Function Get-LemmyComments {
-    <#
+	<#
     .SYNOPSIS
     Call Lemmy API
 
@@ -30,7 +30,7 @@ Function Get-LemmyComments {
     .NOTES
     Lemmy API class: getComments
     #>
-    param(
+	param(
 		[int]$CommunityId,
 		[string]$CommunityName,
 		[int]$Limit,
@@ -39,24 +39,24 @@ Function Get-LemmyComments {
 		[int]$ParentId,
 		[int]$PostId,
 		[boolean]$SavedOnly,
-				[ValidateSet('Hot','New','Old','Top')]
+		[ValidateSet('Hot', 'New', 'Old', 'Top')]
 		[string]$Sort,
-				[ValidateSet('All','Community','Local','Subscribed')]
+		[ValidateSet('All', 'Community', 'Local', 'Subscribed')]
 		[string]$Type
-)
+	)
    
-    	$RequestParameters = @{
-		community_id = $CommunityId
+	$RequestParameters = @{
+		community_id   = $CommunityId
 		community_name = $CommunityName
-		limit = $Limit
-		max_depth = $MaxDepth
-		page = $Page
-		parent_id = $ParentId
-		post_id = $PostId
-		saved_only = $SavedOnly
-		sort = $Sort
-		type_ = $Type
-}
+		limit          = $Limit
+		max_depth      = $MaxDepth
+		page           = $Page
+		parent_id      = $ParentId
+		post_id        = $PostId
+		saved_only     = $SavedOnly
+		sort           = $Sort
+		type_          = $Type
+	}
 
-    Invoke-LemmyRestMethod -Uri '/comment/list' -Method 'GET' -RequestParameters $RequestParameters
+	Invoke-LemmyRestMethod -Uri '/comment/list' -Method 'GET' -RequestParameters $RequestParameters
 }

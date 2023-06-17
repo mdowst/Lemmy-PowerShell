@@ -12,6 +12,7 @@ Function Remove-LemmyAdmin {
     .NOTES
     Lemmy API class: addAdmin
     #>
+    [CmdletBinding()]
     param(
         [int]$PersonId
     )
