@@ -34,7 +34,7 @@ Use the function `Get-LemmyPost` to search for and return Lemmy posts.
 ### Example: Get all posts in a community
 Returns a the posts in the community 'MyCommunity'
 ```PowerShell
-Get-LemmyPost -CommunityName 'MyCommunity' -SearchString 'Hello Lemmy'
+Get-LemmyPost -CommunityName 'MyCommunity'
 ```
 
 ### Example: Search all posts in a community for a string
