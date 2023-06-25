@@ -1,9 +1,6 @@
 # Lemmy
 This is a PowerShell module for interacting with the federated social media platform Lemmy.
 
-# Getting Started
-
-
 # Installation
 This module is still in alpha test, so only the preivew version has been published to the PowerShell Gallery. 
 ```PowerShell
