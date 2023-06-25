@@ -1,14 +1,19 @@
 Function Connect-LemmyInstance {
     <#
     .SYNOPSIS
-    Call Lemmy API
+    Use to authenticate to a Lemmy Instance.
     
-	.PARAMETER Password
+	.PARAMETER Instance
+    The URI of the lemmy instance
 
-	.PARAMETER UsernameOrEmail
+	.PARAMETER Credential
+    A credential object with the username and password. Will be prompted if not supplied.
 
-    .PARAMETER Instance
-    The Lemmy instance to connect to
+    .PARAMETER ApiVersion
+    The Lemmy api version to use. Default to v3. You should not need to change this.
+
+    .PARAMETER SkipCertificateCheck
+    Use to skip certificate checks. Should only be used if you know what you are doing with it.
 
     .EXAMPLE
     An example
@@ -16,23 +21,35 @@ Function Connect-LemmyInstance {
     .NOTES
     General notes
     #>
+    [CmdletBinding()]
     param(
-        [string]$Uri,
+        [parameter(Mandatory=$true)]
+        [Alias('Uri','Site')]
+        [string]$Instance,
+        [parameter(Mandatory=$false)]
         [pscredential]$Credential,
-        [switch]$SkipCertificateCheck=$false,
-        [switch]$PassThru
+        [parameter(Mandatory=$false)]
+        [string]$ApiVersion = 'v3',
+        [parameter(Mandatory=$false)]
+        [switch]$SkipCertificateCheck=$false
     )
+
+    if(-not $PSBoundParameters['Credential']){
+        $Credential = Get-Credential
+    }
 
     $RequestBody = @{
         password          = $credential.GetNetworkCredential().Password
         username_or_email = $Credential.UserName
     } | ConvertTo-Json
     
-    
-    $URI = $URI -replace ('/$', '')
+    if($Instance -notmatch 'https://'){
+        $Instance = 'https://' + $Instance 
+    }
+    $Instance = $Instance -replace ('/$', '')
     
     $InvokeRestMethodParam = @{
-        Uri         = "$($Uri)/api/v3/user/login"
+        Uri         = "$($Instance)/api/$($ApiVersion)/user/login"
         Method      = 'POST'
         Body        = $RequestBody
         ContentType = 'application/json'
@@ -42,17 +59,14 @@ Function Connect-LemmyInstance {
     $authRequest = Invoke-RestMethod @InvokeRestMethodParam
 
 
-    $Instance = [PSCustomObject]@{
-        Domain = $Uri
+    $LemmyInstance = [PSCustomObject]@{
+        Domain = $Instance
         auth   = $authRequest.jwt
         SkipCertificateCheck = $SkipCertificateCheck
+        Api = $ApiVersion
     }
-    $global:__LemmyInstance = $Instance
+    $global:__LemmyInstance = $LemmyInstance
 
-    if ($PassThru) {
-        $Instance
-    }
-    else {
-        Write-Output "Connected to $($Instance.Domain)"
-    }
+    
+    Write-Output "Connected to $($global:__LemmyInstance.Domain)"
 }

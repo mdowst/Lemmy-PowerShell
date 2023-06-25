@@ -1,5 +1,5 @@
 # Get all the ps1 files in the Public folder
-$Functions = Get-ChildItem -Path $PSScriptRoot -Filter '*.ps1' -Recurse
+$Functions = Get-ChildItem -Path $PSScriptRoot -Filter '*.ps1' -Recurse | Where-Object{ $_.Name -notmatch '.build.ps1'}
 
 # Loop through each ps1 file
 Foreach ($import in $Functions) {

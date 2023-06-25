@@ -1,7 +1,7 @@
-Function Remove-LemmyCommunityMod {
+Function Add-LemmyModerator {
     <#
     .SYNOPSIS
-    Remove a community moderator
+    Add a community moderator (Moderator permissions required)
 
 	.PARAMETER CommunityId
     The ID of the communituy
@@ -10,19 +10,21 @@ Function Remove-LemmyCommunityMod {
     The ID of the person
 
     .EXAMPLE
-    Remove-LemmyCommunityMod -CommunityId 123 -PersonId 456
+    Add-LemmyCommunityMod -CommunityId 123 -PersonId 456
     
     .NOTES
     Lemmy API class: addModToCommunity
     #>
     [CmdletBinding()]
     param(
+        [Parameter(Mandatory = $true)]
         [int]$CommunityId,
+        [Parameter(Mandatory = $true)]
         [int]$PersonId
     )
    
     $RequestParameters = @{
-        added        = $false
+        added        = $true
         community_id = $CommunityId
         person_id    = $PersonId
     }

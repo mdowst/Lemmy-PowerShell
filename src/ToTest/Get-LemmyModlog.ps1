@@ -1,5 +1,5 @@
 Function Get-LemmyModlog {
-    <#
+	<#
     .SYNOPSIS
     Call Lemmy API
 
@@ -22,24 +22,24 @@ Function Get-LemmyModlog {
     .NOTES
     Lemmy API class: getModlog
     #>
-    param(
+	param(
 		[int]$CommunityId,
 		[int]$Limit,
 		[int]$ModPersonId,
 		[int]$OtherPersonId,
 		[int]$Page,
-		[ValidateSet('AdminPurgeComment','AdminPurgeCommunity','AdminPurgePerson','AdminPurgePost','All','ModAdd','ModAddCommunity','ModBan','ModBanFromCommunity','ModFeaturePost','ModHideCommunity','ModLockPost','ModRemoveComment','ModRemoveCommunity','ModRemovePost','ModTransferCommunity')]
+		[ValidateSet('AdminPurgeComment', 'AdminPurgeCommunity', 'AdminPurgePerson', 'AdminPurgePost', 'All', 'ModAdd', 'ModAddCommunity', 'ModBan', 'ModBanFromCommunity', 'ModFeaturePost', 'ModHideCommunity', 'ModLockPost', 'ModRemoveComment', 'ModRemoveCommunity', 'ModRemovePost', 'ModTransferCommunity')]
 		[string]$Type
-)
+	)
    
-    	$RequestParameters = @{
-		community_id = $CommunityId
-		limit = $Limit
-		mod_person_id = $ModPersonId
+	$RequestParameters = @{
+		community_id    = $CommunityId
+		limit           = $Limit
+		mod_person_id   = $ModPersonId
 		other_person_id = $OtherPersonId
-		page = $Page
-		type_ = $Type
-}
+		page            = $Page
+		type_           = $Type
+	}
 
-    Invoke-LemmyRestMethod -Uri '/modlog' -Method 'GET' -RequestParameters $RequestParameters
+	Invoke-LemmyRestMethod -Uri '/modlog' -Method 'GET' -RequestParameters $RequestParameters
 }

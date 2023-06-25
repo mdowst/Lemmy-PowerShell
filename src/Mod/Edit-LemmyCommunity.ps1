@@ -1,5 +1,5 @@
 Function Edit-LemmyCommunity {
-    <#
+	<#
     .SYNOPSIS
     Call Lemmy API
 
@@ -26,7 +26,7 @@ Function Edit-LemmyCommunity {
     .NOTES
     Lemmy API class: editCommunity
     #>
-    param(
+	param(
 		[string]$Banner,
 		[int]$CommunityId,
 		[string]$Description,
@@ -35,18 +35,18 @@ Function Edit-LemmyCommunity {
 		[boolean]$Nsfw,
 		[boolean]$PostingRestrictedToMods,
 		[string]$Title
-)
+	)
    
-    	$RequestParameters = @{
-		banner = $Banner
-		community_id = $CommunityId
-		description = $Description
-		discussion_languages = $DiscussionLanguages
-		icon = $Icon
-		nsfw = $Nsfw
+	$RequestParameters = @{
+		banner                     = $Banner
+		community_id               = $CommunityId
+		description                = $Description
+		discussion_languages       = $DiscussionLanguages
+		icon                       = $Icon
+		nsfw                       = $Nsfw
 		posting_restricted_to_mods = $PostingRestrictedToMods
-		title = $Title
-}
+		title                      = $Title
+	}
 
-    Invoke-LemmyRestMethod -Uri '/community' -Method 'PUT' -RequestParameters $RequestParameters
+	Invoke-LemmyRestMethod -Uri '/community' -Method 'PUT' -RequestParameters $RequestParameters
 }

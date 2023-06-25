@@ -3,8 +3,6 @@ Function Block-LemmyCommunity {
     .SYNOPSIS
     Call Lemmy API
 
-	.PARAMETER Block
-
 	.PARAMETER CommunityId
 
 

@@ -12,7 +12,7 @@
 RootModule = '.\Lemmy.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.0.0'
+ModuleVersion = '0.0.0.1'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,13 +24,13 @@ GUID = '3ac5008d-5c9a-4f10-893d-a071cad0a8f0'
 Author = 'Matthew Dowst'
 
 # Company or vendor of this module
-CompanyName = 'Unknown'
+CompanyName = 'Dowst.Dev'
 
 # Copyright statement for this module
 Copyright = '(c) Matthew Dowst. All rights reserved.'
 
 # Description of the functionality provided by this module
-# Description = ''
+Description = 'This is a PowerShell module for interacting with the federated social media platform Lemmy.'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '5.1'
@@ -101,7 +101,7 @@ PrivateData = @{
         # LicenseUri = ''
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/mdowst/Lemmy-PowerShell'
 
         # A URL to an icon representing this module.
         # IconUri = ''

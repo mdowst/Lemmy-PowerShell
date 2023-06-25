@@ -40,7 +40,7 @@ Function Invoke-LemmyRestMethod{
     
 
     $params = @{
-        Uri = "$($Global:__LemmyInstance.Domain)/api/v3$($Uri)"
+        Uri = "$($Global:__LemmyInstance.Domain)/api/$($Global:__LemmyInstance.Api)$($Uri)"
         Method = $Method
         ContentType = 'application/json'
         SkipCertificateCheck = $Global:__LemmyInstance.SkipCertificateCheck

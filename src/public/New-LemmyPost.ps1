@@ -15,7 +15,7 @@ Function New-LemmyPost {
 	.PARAMETER LanguageId
 	The ID of the language to make the post with
 
-	.PARAMETER Name
+	.PARAMETER Title
 	The Title of the post
 
 	.PARAMETER Nsfw
@@ -39,9 +39,9 @@ Function New-LemmyPost {
 		[Parameter(Mandatory = $false)]
 		[string]$Honeypot,
 		[Parameter(Mandatory = $false)]
-		[int]$LanguageId = 37,
+		[int]$LanguageId,
 		[Parameter(Mandatory = $true)]
-		[string]$Name,
+		[string]$Title,
 		[Parameter(Mandatory = $false)]
 		[boolean]$Nsfw = $false,
 		[Parameter(Mandatory = $false)]
@@ -53,10 +53,15 @@ Function New-LemmyPost {
 		community_id = $CommunityId
 		honeypot     = $Honeypot
 		language_id  = $LanguageId
-		name         = $Name
+		name         = $Title
 		nsfw         = $Nsfw
 		url          = $Url
 	}
-
-	Invoke-LemmyRestMethod -Uri '/post' -Method 'POST' -RequestParameters $RequestParameters
+	$RequestParametersClean = @{}
+	$RequestParameters.GetEnumerator() | ForEach-Object {
+		if ($_.Value) {
+			$RequestParametersClean.Add($_.key,$_.Value)
+		}
+	}
+	Invoke-LemmyRestMethod -Uri '/post' -Method 'POST' -RequestParameters $RequestParametersClean
 }
