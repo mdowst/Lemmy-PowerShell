@@ -1,4 +1,4 @@
-Function Invoke-LemmyRestMethod{
+Function Invoke-LemmyRestMethod {
     <#
     .SYNOPSIS
     Call Lemmy API
@@ -21,40 +21,42 @@ Function Invoke-LemmyRestMethod{
     param(
         $Uri,
         $Method,
-        $RequestParameters
+        [Parameter(Mandatory = $false, ParameterSetName = 'Body')]
+        $RequestParameters,
+        [Parameter(Mandatory = $false, ParameterSetName = 'Query')]
+        $QueryParameters
     )
-    
-    if(-not $PSBoundParameters['RequestParameters']){
-        $RequestBody = @{}
-    }
-    else{
-        $RequestBody = $RequestParameters.Clone()
-    }
-
-    if(-not $Global:__LemmyInstance){
-        throw "Run Connect-LemmyInstance to connect to a Lemmy instance"
-    }
-    elseif($Global:__LemmyInstance.auth){
-        $RequestBody.Add('auth', $Global:__LemmyInstance.auth)
-    }
-    
-
+    Test-LemmyConnection
+ 
     $params = @{
-        Uri = "$($Global:__LemmyInstance.Domain)/api/$($Global:__LemmyInstance.Api)$($Uri)"
-        Method = $Method
-        ContentType = 'application/json'
+        Uri                  = "$($Global:__LemmyInstance.Domain)/api/$($Global:__LemmyInstance.Api)$($Uri)"
+        Method               = $Method
+        ContentType          = 'application/json'
         SkipCertificateCheck = $Global:__LemmyInstance.SkipCertificateCheck
     }
+    Write-Verbose "URI : $($params['Uri'])"
 
-    if($RequestBody.Count -gt 0){
-        $params.Add('Body',($RequestBody | ConvertTo-Json))
+    if ($PSBoundParameters['QueryParameters']) {
+        $query = $QueryParameters.GetEnumerator() | ForEach-Object {
+            if ($_.Value) {
+                "$($_.key)=$($_.Value)"
+            }
+        }
+        $params['Uri'] = $params['Uri'] + '?' + ($query -join ('&'))
+        Write-Verbose "Query URI : $($params['Uri'])"
+        $params['Uri'] = $params['Uri'] + '&auth=' + $Global:__LemmyInstance.auth
+    }
+    elseif ($PSBoundParameters['RequestParameters']){
+        $RequestBody = $RequestParameters.Clone()
+        $RequestBody.Add('auth', $Global:__LemmyInstance.auth)
+        $params.Add('Body', ($RequestBody | ConvertTo-Json))
     }
 
     $request = Invoke-RestMethod @params
-    if($request.psobject.Properties.Count -eq 1 -and $request.psobject.Properties.TypeNameOfValue -eq 'System.Object[]'){
+    if ($request.psobject.Properties.Count -eq 1 -and $request.psobject.Properties.TypeNameOfValue -eq 'System.Object[]') {
         $request.psobject.Properties.Value
     }
-    else{
+    else {
         $request
     }
 

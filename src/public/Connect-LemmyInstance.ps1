@@ -9,6 +9,9 @@ Function Connect-LemmyInstance {
 	.PARAMETER Credential
     A credential object with the username and password. Will be prompted if not supplied.
 
+    .PARAMETER PageLimit
+    The number of results to return for each call
+
     .PARAMETER ApiVersion
     The Lemmy api version to use. Default to v3. You should not need to change this.
 
@@ -30,6 +33,8 @@ Function Connect-LemmyInstance {
         [pscredential]$Credential,
         [parameter(Mandatory=$false)]
         [string]$ApiVersion = 'v3',
+        [parameter(Mandatory=$false)]
+        [string]$PageLimit = 50,
         [parameter(Mandatory=$false)]
         [switch]$SkipCertificateCheck=$false
     )
@@ -64,6 +69,7 @@ Function Connect-LemmyInstance {
         auth   = $authRequest.jwt
         SkipCertificateCheck = $SkipCertificateCheck
         Api = $ApiVersion
+        PageLimit = $PageLimit
     }
     $global:__LemmyInstance = $LemmyInstance
 

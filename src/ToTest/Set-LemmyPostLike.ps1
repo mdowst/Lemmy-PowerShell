@@ -15,14 +15,14 @@ Function Set-LemmyPostLike {
     Lemmy API class: likePost
     #>
     param(
-		[int]$PostId,
-		[int]$Score
-)
+        [int]$PostId,
+        [int]$Score
+    )
    
-    	$RequestParameters = @{
-		post_id = $PostId
-		score = $Score
-}
+    $RequestParameters = @{
+        post_id = $PostId
+        score   = $Score
+    }
 
     Invoke-LemmyRestMethod -Uri '/post/like' -Method 'POST' -RequestParameters $RequestParameters
 }

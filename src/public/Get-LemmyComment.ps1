@@ -1,4 +1,4 @@
-Function Get-LemmyComments {
+Function Get-LemmyComment {
 	<#
     .SYNOPSIS
     Call Lemmy API
@@ -36,8 +36,9 @@ Function Get-LemmyComments {
 	.PARAMETER Sort
 	Sort type
 
-	.PARAMETER Type
-	Search 'All', 'Community', 'Local', or 'Subscribed'
+	.PARAMETER Scope
+	The scope in which to return comments from. Default is All
+	'All', 'Community', 'Local', or 'Subscribed'
 
     .EXAMPLE
     $post = Get-LemmyPost -CommunityName 'MyCommunity' -SearchString 'Hello Lemmy'
@@ -52,6 +53,7 @@ Function Get-LemmyComments {
 	param(
 		[Parameter(Mandatory = $true, ParameterSetName = 'ID')]
 		[int]$Id,
+		
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
 		[string]$SearchString,
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
@@ -59,11 +61,7 @@ Function Get-LemmyComments {
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
 		[string]$CommunityName,
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
-		[int]$Limit,
-		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
-		[int]$MaxDepth,
-		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
-		[int]$Page,
+		[int]$MaxDepth = 8,
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
 		[int]$ParentId,
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
@@ -72,10 +70,10 @@ Function Get-LemmyComments {
 		[boolean]$SavedOnly,
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
 		[ValidateSet('Hot', 'New', 'Old', 'Top')]
-		[string]$Sort,
+		[string]$Sort = 'Hot',
 		[Parameter(Mandatory = $false, ParameterSetName = 'Search')]
 		[ValidateSet('All', 'Community', 'Local', 'Subscribed')]
-		[string]$Type
+		[string]$Scope = 'All'
 	)
    
 	
@@ -88,29 +86,24 @@ Function Get-LemmyComments {
 		$comments = Invoke-LemmyRestMethod -Uri '/comment' -Method 'GET' -RequestParameters $RequestParameters
 	}
 	else {
+		$page = 1
 		$RequestParameters = @{
 			community_id   = $CommunityId
 			community_name = $CommunityName
-			limit          = $Limit
 			max_depth      = $MaxDepth
 			page           = $Page
 			parent_id      = $ParentId
 			post_id        = $PostId
 			saved_only     = $SavedOnly
 			sort           = $Sort
-			type_          = $Type
-		}
-		$query = $RequestParameters.GetEnumerator() | ForEach-Object {
-			if ($_.Value) {
-				"$($_.key)=$($_.Value)"
-			}
+			type_          = $Scope
 		}
 
-		$comments = Invoke-LemmyRestMethod -Uri ('/comment/list?' + ($query -join ('&'))) -Method 'GET' -RequestParameters $RequestParameters
+		$comments = Invoke-LemmyRestMethod -Uri '/comment/list' -Method 'GET' -QueryParameters $RequestParameters
 
 		if($PSBoundParameters['SearchString']){
 			$comments = $comments | Where-Object{ $_.comment.content -match $SearchString }
 		}
 	}
-	$comments
+	$comments | Where-Object { $_.comment } | Select-Object -ExpandProperty comment -Property * -ExcludeProperty comment
 }
