@@ -57,21 +57,21 @@ It is recommended that you filter it down to the post itself first, then search 
 Searches for a post with the title 'Hello Lemmy' in the community 'MyCommunity' then gets the comments for the post
 ```PowerShell
 $post = Get-LemmyPost -CommunityName 'MyCommunity' -SearchString 'Hello Lemmy'
-Get-LemmyComments -PostId $post.post.id
+Get-LemmyComment -PostId $post.post.id
 ```
 
 ### Example: Get all top-level comments in post
 Get the top-level comments
 ```PowerShell
 $post = Get-LemmyPost -CommunityName 'MyCommunity' -SearchString 'Hello Lemmy'
-Get-LemmyComments -PostId $post.post.id -MaxDepth 1
+Get-LemmyComment -PostId $post.post.id -MaxDepth 1
 ```
 
 ### Exmaple: Search comments with specific text 
 Use the SearchString parameter to search the text inside a comment
 ```PowerShell
 $post = Get-LemmyPost -CommunityName 'MyCommunity' -SearchString 'Hello Lemmy'
-Get-LemmyComments -PostId $post.post.id -SearchString 'bad comment'
+Get-LemmyComment -PostId $post.post.id -SearchString 'bad comment'
 ```
 
 ## Find Users
@@ -106,14 +106,14 @@ It is recommended that you filter it down to the post itself first, then search 
 Searches for a post with the title 'Hello Lemmy' in the community 'MyCommunity', then gets the comment with the text 'A naughty comment', then removes the comment.
 ```PowerShell
 $post = Get-LemmyPost -CommunityName 'MyCommunity' -SearchString 'Hello Lemmy'
-$comment = Get-LemmyComments -PostId $post.post.id -SearchString 'A naughty comment'
+$comment = Get-LemmyComment -PostId $post.post.id -SearchString 'A naughty comment'
 Remove-LemmyComment -CommentId $comment.comment.id
 ```
 
 The link button you see on the Lemmy site will only give you the ID of the top level comment.
 But you can use that to narrow your search to the child comments and find the one you want to remove.
 ```PowerShell
-$comment = Get-LemmyComments -PostId 1234 -ParentID 5 -SearchString 'A naughty comment'
+$comment = Get-LemmyComment -PostId 1234 -ParentID 5 -SearchString 'A naughty comment'
 Remove-LemmyComment -CommentId $comment.comment.id
 ```
 
