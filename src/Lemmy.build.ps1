@@ -4,7 +4,7 @@ $IncludeDirectories = 'Admin','Private','Public','Mod'
 $SourcePath = (Split-Path $PSScriptRoot)
 $ModulesFolder = Join-Path $SourcePath 'src'
 
-#$NugetAPIKey = Get-Content (Join-Path $PSScriptRoot 'APIKey.json')
+$NugetAPIKey = Get-Content (Join-Path $SourcePath '\.build\APIKey')
 
 # Get the module manifest
 $psd1File = Get-ChildItem -path $ModulesFolder -Filter "*.psd1"
