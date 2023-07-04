@@ -42,7 +42,7 @@ Function Get-LemmyComment {
 
     .EXAMPLE
     $post = Get-LemmyPost -CommunityName 'MyCommunity' -SearchString 'Hello Lemmy'
-	Get-LemmyComments -PostId $post.post.id
+	Get-LemmyComment -PostId $post.post.id
 
 	Searches for a post with the title 'Hello Lemmy' in the community 'MyCommunity' then gets the comments for the post
     
