@@ -40,7 +40,7 @@ Function Get-LemmyPerson {
     }
     catch {
         if($PSCmdlet.ParameterSetName -eq 'Name'){
-            $person = Search-Lemmy -Type 'Users' -Q $Name
+            $person = Search-Lemmy -Type 'Users' -SearchString $Name
         }
         else{
             throw "UserId $($Id) not found"

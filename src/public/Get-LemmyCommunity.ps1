@@ -22,10 +22,7 @@ Function Get-LemmyCommunity {
     
     .PARAMETER ReturnLimit
     The number of communities to return
-    
-    .PARAMETER FetchLimit
-    The fetch limit used for pagination. The Lemmy default is 50, but if an admin has reduced it, you can supply that value here.
-    
+        
     .EXAMPLE
     Get-LemmyCommunity -ID 123
 
@@ -54,61 +51,73 @@ Function Get-LemmyCommunity {
     .NOTES
     Lemmy API class: listCommunities & getCommunity
     #>
-    [CmdletBinding(DefaultParameterSetName='List')]
+    [CmdletBinding(DefaultParameterSetName = 'List')]
     param(
         [Parameter(Mandatory = $true, ParameterSetName = 'ID')]
         [int]$Id,
+        
         [Parameter(Mandatory = $true, ParameterSetName = 'Name')]
         [string]$Name,
+
         [Parameter(Mandatory = $false, ParameterSetName = 'List')]
         [ValidateSet('Active', 'Hot', 'MostComments', 'New', 'NewComments', 'Old', 'TopAll', 'TopDay', 'TopMonth', 'TopWeek', 'TopYear')]
-        [string]$Sort = 'Active',
+        [string]$Sort = 'TopMonth',
         [Parameter(Mandatory = $false, ParameterSetName = 'List')]
         [ValidateSet('All', 'Community', 'Local', 'Subscribed')]
         [string]$Scope = 'Local',
         [Parameter(Mandatory = $false, ParameterSetName = 'List')]
-        [int]$ReturnLimit = 0,
-        [Parameter(Mandatory = $false, ParameterSetName = 'List')]
-        [int]$FetchLimit = 50
+        [int]$ReturnLimit = 50
     )
+    Test-LemmyConnection
 
     $community = $null
     if ($PSCmdlet.ParameterSetName -eq 'ID') {
-        $request = Invoke-LemmyRestMethod -Uri ('/community?id=' + $Id) -Method 'GET' -RequestParameters $RequestParameters
-        $community = $request | Where-Object { $_.community } | Select-Object -ExpandProperty community | Select-Object -Property * -Unique
+        $community = Invoke-LemmyRestMethod -Uri '/community' -QueryParameters @{id=$Id} -Method 'GET'
     }
     elseif ($PSCmdlet.ParameterSetName -eq 'Name') {
         try {
-            $request = Invoke-LemmyRestMethod -Uri ('/community?name=' + $name) -Method 'GET' -RequestParameters $RequestParameters -ErrorAction Stop
-            $request | Where-Object { $_.community } | Select-Object -ExpandProperty community | Select-Object -Property * -Unique
+            $request = Invoke-LemmyRestMethod -Uri '/community' -QueryParameters @{name=$name} -Method 'GET' -ErrorAction Stop
+            $community = $request
         }
         catch {
-            $search = Search-Lemmy -Type 'Communities' -Q $Name
-            $community = $search | Where-Object { $_.community } | Select-Object -ExpandProperty community
+            $search = Search-Lemmy -Type 'Communities' -SearchString $Name
+            $community = $search
         }
     }
     else {
         [Collections.Generic.List[PSObject]] $communities = @()
+        $Limit = $Global:__LemmyInstance.PageLimit
+        if ($PSBoundParameters['ReturnLimit'] -and $PSBoundParameters['ReturnLimit'] -lt $Limit) {
+            $Limit = $ReturnLimit
+        }
         $page = 1
         do {
-            $RequestParameters = @{
-                limit = $FetchLimit
-                page  = $page
-                sort  = $Sort
+            $RequestParameters = [ordered]@{
                 type_ = $Scope
+                sort  = $Sort
+                limit = $Limit
+                page  = $page
             }
-            $query = $RequestParameters.GetEnumerator() | ForEach-Object {
-                if ($_.Value) {
-                    "$($_.key)=$($_.Value)"
-                }
-            }
-
-            $results = Invoke-LemmyRestMethod -Uri ('/community/list?' + ($query -join ('&'))) -Method 'GET' -RequestParameters $RequestParameters
-            $results | Where-Object { $_.community } | Select-Object -ExpandProperty community | ForEach-Object{ $communities.Add($_) }
+            
+            $results = Invoke-LemmyRestMethod -Uri '/community/list' -QueryParameters $RequestParameters -Method 'GET'
+            $results | ForEach-Object { $communities.Add($_) }
             $page++
-        }while($results -and ($communities.Count -lt $ReturnLimit -or $ReturnLimit -eq 0))
+        }while ($results -and ($communities.Count -lt $ReturnLimit -or $ReturnLimit -eq 0))
         $community = $communities
     }
 
-    $community
+    $Groupings = $community | Where-Object { $_.community } | Select-Object -ExpandProperty community -Property * -ExcludeProperty community | Group-Object -Property { $_.id }
+
+    # Grouping and combining community returns because multiple returns with different properties can be returned for a single community. 
+    foreach ($Group in $Groupings) {
+        $properties = [ordered]@{}
+        foreach ($g in $Group.Group) {
+            $g.psobject.Properties | ForEach-Object {
+                if (-not $properties.Contains($_.Name)) {
+                    $properties.Add($_.Name, $_.Value)
+                }
+            }
+        }
+        [pscustomobject]$properties
+    }
 }

@@ -25,6 +25,7 @@ Function New-LemmyComment {
     .NOTES
     Lemmy API class: createComment
     #>
+	[CmdletBinding()]
 	param(
 		[string]$Content,
 		[string]$FormId,
